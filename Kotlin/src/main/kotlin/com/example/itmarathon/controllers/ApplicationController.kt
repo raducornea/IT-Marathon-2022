@@ -43,12 +43,12 @@ class ApplicationController {
     }
 
     // applicationModel - JSON care contine name si information
-    @RequestMapping(value = ["/application/{applicationName}"], method = [RequestMethod.PUT])
+    @RequestMapping(value = ["/application"], method = [RequestMethod.PUT])
     fun uploadVersionSoftwareFiles(@RequestBody applicationModel: ApplicationUpdate): ResponseEntity<Unit> {
-        _serverService.getApplicationByName(applicationName)?.let {
-            _serverService.updateSoftwareVersion(it.id, applicationData)
-            return ResponseEntity(Unit, HttpStatus.ACCEPTED)
-        } ?: return ResponseEntity(Unit, HttpStatus.NOT_FOUND)
+        val status = _serverService.uploadVersionSoftwareFiles(applicationModel.name, applicationModel.data)
+
+        return if (status) ResponseEntity(Unit, HttpStatus.CREATED)
+        else ResponseEntity(Unit, HttpStatus.NOT_FOUND)
     }
 
     //todo

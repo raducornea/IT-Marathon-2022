@@ -49,12 +49,22 @@ class ServerService : IServerService {
     }
 
     /** Vine un nou update */
-    override fun uploadVersionSoftwareFiles(id: Int, name: String, information: String, version: Int){
+    override fun uploadVersionSoftwareFiles(name: String, information: String): Boolean{
         /** Trebuie notificati utilizatorii care folosesc acea aplicatie */
+        val app = _applicationRepository.getAppByName(name)
+        if (app != null) {
+            _applicationRepository.updateApp(app.id, information)
+            return true
+        }
+        return false
     }
 
     /** Se sterge o Aplicatie cu totul */
     override fun deleteApplication(id: Int, name: String, information: String, version: Int){
         /** Trebuie notificati utilizatorii care folosesc acea aplicatie */
+    }
+
+    override fun getApplicationByName(name: String): Application? {
+        return _applicationRepository.getAppByName(name)
     }
 }
