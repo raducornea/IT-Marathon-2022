@@ -1,7 +1,8 @@
+import json
 import tkinter as tk
 import tkinter.ttk
 
-import  requests as rq
+import requests as rq
 
 thisdict = {}
 
@@ -194,10 +195,17 @@ class Admin:
         self.interface.mainloop()
 
     def ADD_app(self):
-        r = rq.post(f'http://localhost:6480/application?name={self.applicationNameEntry.get()}&data={self.data.get("1.0", "end")}')
+        rq.post(f'http://localhost:6480/application?name={self.applicationNameEntry.get()}&data={self.data.get("1.0", "end")}')
 
     def UPDATE(self):
-        pass
+        content = {
+            "name": f"{self.applicationNameEntry.get()}",
+            "data": f'{self.data.get("1.0", "end")}'
+        }
+
+        print(str(content))
+
+        rq.put(f'http://localhost:6480/application', json=content)
 
     def GET(self):
         pass
