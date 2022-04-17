@@ -34,8 +34,12 @@ class UserRepository: IUserRepository {
     }
 
     override fun loginUser(name: String, password: String): User? {
-        return _jdbcTemplate.queryForObject(
-            "SELECT * FROM Users WHERE name = '$name' AND password = '$password'", _rowMapper)
+        return try {
+            _jdbcTemplate.queryForObject(
+                "SELECT * FROM Users WHERE name = '$name' AND password = '$password'", _rowMapper)
+        } catch (e: Exception) {
+            null
+        }
     }
 
     private fun createTable() {
