@@ -1,20 +1,42 @@
 package com.example.itmarathon.services
 
 import com.example.itmarathon.interfaces.IServerService
+import com.example.itmarathon.models.Application
+import com.example.itmarathon.models.Device
+import com.example.itmarathon.models.User
+import com.example.itmarathon.persistence.interfaces.IApplicationRepository
+import com.example.itmarathon.persistence.interfaces.IDeviceRepository
+import com.example.itmarathon.persistence.interfaces.IDevicesApplicationsRepository
+import com.example.itmarathon.persistence.interfaces.IUserRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
 class ServerService : IServerService {
-    override fun registerNewUser(userName: String, password: String){
 
+    @Autowired
+    private lateinit var _applicationRepository: IApplicationRepository
+
+    @Autowired
+    private lateinit var _userRepository: IUserRepository
+
+    @Autowired
+    private lateinit var _deviceRepository: IDeviceRepository
+
+    @Autowired
+    private lateinit var _devicesApplicationsRepository: IDevicesApplicationsRepository
+
+
+    override fun registerNewUser(userName: String, password: String): Boolean {
+        return _userRepository.registerUser(User(name = userName, password = password, admin = 0))
     }
 
-    override fun registerNewDevice(deviceName: String){
-
+    override fun registerNewDevice(deviceName: String, userId: Int): Boolean{
+        return _deviceRepository.registerDevice(Device(name = deviceName, userId = userId));
     }
 
-    override fun defineApplication(id: Int, name: String, information: String, version: Int){
-
+    override fun defineApplication(name: String, data: String): Boolean{
+        return _applicationRepository.uploadApp(Application(name = name, data = data))
     }
 
     /** In functie de deviceId, se va notifica user-ul cu privire la noi versiuni pe care le poate sau nu updata */
