@@ -15,6 +15,8 @@ class ApplicationController {
     @Autowired
     private lateinit var _serverService: IServerService
 
+    private var currentUser: User? = null
+
     @RequestMapping(value = ["/user"], method = [RequestMethod.POST])
     fun registerNewUser(@RequestParam(required = true, name = "userName") userName : String,
                         @RequestParam(required = true, name = "password") password : String): ResponseEntity<Unit> {
@@ -22,6 +24,15 @@ class ApplicationController {
 
         return if (status) ResponseEntity(Unit, HttpStatus.CREATED)
         else ResponseEntity(Unit, HttpStatus.BAD_REQUEST)
+    }
+
+    @RequestMapping(value = ["/user"], method = [RequestMethod.GET])
+    fun loginUser(@RequestParam(required = true, name = "userName") userName : String,
+                  @RequestParam(required = true, name = "password") password : String): ResponseEntity<User> {
+        val currentUser = _serverService.loginUser(userName, password)
+
+        return if (currentUser != null) ResponseEntity(currentUser, HttpStatus.CREATED)
+        else ResponseEntity(currentUser, HttpStatus.BAD_REQUEST)
     }
 
     @RequestMapping(value = ["/device"], method = [RequestMethod.POST])
@@ -54,6 +65,17 @@ class ApplicationController {
     @RequestMapping(value = ["/device/{id}"], method = [RequestMethod.GET])
     fun getApplicationsOfDevice(@PathVariable id: Int): ResponseEntity<List<Application?>> {
         val apps = _serverService.getDeviceApplications(id)
+
+        return if(apps.isNotEmpty()) {
+            ResponseEntity(apps, HttpStatus.OK)
+        } else {
+            ResponseEntity(apps, HttpStatus.NOT_FOUND)
+        }
+    }
+
+    @RequestMapping(value = ["/applications"], method = [RequestMethod.GET])
+    fun getAllApplications(): ResponseEntity<List<Application?>> {
+        val apps = _serverService.getAllApplications()
 
         return if(apps.isNotEmpty()) {
             ResponseEntity(apps, HttpStatus.OK)

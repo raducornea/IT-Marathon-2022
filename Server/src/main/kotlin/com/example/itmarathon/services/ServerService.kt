@@ -27,6 +27,10 @@ class ServerService : IServerService {
     private lateinit var _devicesApplicationsRepository: IDevicesApplicationsRepository
 
 
+    override fun getAllApplications(): List<Application?> {
+        return _applicationRepository.getAllApps()
+    }
+
     override fun registerNewUser(userName: String, password: String): Boolean {
         return _userRepository.registerUser(User(name = userName, password = password, admin = 0))
     }
@@ -75,5 +79,9 @@ class ServerService : IServerService {
 
     override fun getApplicationByName(name: String): Application? {
         return _applicationRepository.getAppByName(name)
+    }
+
+    override fun loginUser(userName: String, password: String): User? {
+        return _userRepository.loginUser(userName, password)
     }
 }
