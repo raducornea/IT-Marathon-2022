@@ -1,6 +1,10 @@
 package com.example.itmarathon.controllers
 
 import com.example.itmarathon.interfaces.IServerService
+import com.example.itmarathon.models.Application
+import com.example.itmarathon.models.ApplicationUpdate
+import com.example.itmarathon.models.Device
+import com.example.itmarathon.models.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -12,39 +16,49 @@ class ApplicationController {
     private lateinit var _serverService: IServerService
 
     @RequestMapping(value = ["/user"], method = [RequestMethod.POST])
-    fun registerNewUser(@RequestBody user: User): ResponseEntity<Unit> {
-        _serverService.registerNewUser(user)
-        return ResponseEntity(Unit, HttpStatus.CREATED)
+    fun registerNewUser(@RequestParam(required = true, name = "userName") userName : String,
+                        @RequestParam(required = true, name = "password") password : String): ResponseEntity<Unit> {
+        val status = _serverService.registerNewUser(userName, password)
+
+        return if (status) ResponseEntity(Unit, HttpStatus.CREATED)
+        else ResponseEntity(Unit, HttpStatus.BAD_REQUEST)
     }
 
     @RequestMapping(value = ["/device"], method = [RequestMethod.POST])
-    fun registerNewDevice(@RequestBody device: Device): ResponseEntity<Unit> {
-        _serverService.registerNewDevice(device)
-        return ResponseEntity(Unit, HttpStatus.CREATED)
+    fun registerNewDevice(@RequestParam(required = true, name = "deviceName") deviceName : String,
+                          @RequestParam(required = true, name = "userId") userId : Int): ResponseEntity<Unit> {
+        val status = _serverService.registerNewDevice(deviceName, userId)
+
+        return if (status) ResponseEntity(Unit, HttpStatus.CREATED)
+        else ResponseEntity(Unit, HttpStatus.BAD_REQUEST)
     }
 
     @RequestMapping(value = ["/application"], method = [RequestMethod.POST])
-    fun defineApplication(@RequestBody application: Application): ResponseEntity<Unit> {
-        _serverService.registerNewDevice(application)
-        return ResponseEntity(Unit, HttpStatus.CREATED)
+    fun defineApplication(@RequestParam(required = true, name = "name") name : String,
+                          @RequestParam(required = true, name = "data") data : String): ResponseEntity<Unit> {
+        val status = _serverService.defineApplication(name, data)
+
+        return if (status) ResponseEntity(Unit, HttpStatus.CREATED)
+        else ResponseEntity(Unit, HttpStatus.BAD_REQUEST)
     }
 
-    @RequestMapping(value = ["/application/{id}"], method = [RequestMethod.PUT])
-    fun updateSoftwareVersion(@PathVariable id: Int, @RequestBody application: Application): ResponseEntity<Unit> {
-        _serverService.getApplication(id)?.let {
-            _serverService.notifyUpdates(it.id, application)
+    // applicationModel - JSON care contine name si information
+    @RequestMapping(value = ["/application/{applicationName}"], method = [RequestMethod.PUT])
+    fun uploadVersionSoftwareFiles(@RequestBody applicationModel: ApplicationUpdate): ResponseEntity<Unit> {
+        _serverService.getApplicationByName(applicationName)?.let {
+            _serverService.updateSoftwareVersion(it.id, applicationData)
             return ResponseEntity(Unit, HttpStatus.ACCEPTED)
         } ?: return ResponseEntity(Unit, HttpStatus.NOT_FOUND)
     }
 
-    @RequestMapping(value = ["/application/{id}"], method = [RequestMethod.DELETE])
-    fun deletePerson(@PathVariable id: Int, @RequestBody application: Application): ResponseEntity<Unit> {
-        if (_serverService.getApplication(id) != null) {
-            _serverService.notifyDeletion(it.id, application)
-            return ResponseEntity(Unit, HttpStatus.OK)
-        } else {
-            return ResponseEntity(Unit, HttpStatus.NOT_FOUND)
-        }
-    }
-
+    //todo
+//    @RequestMapping(value = ["/application"], method = [RequestMethod.DELETE])
+//    fun deleteApplication(@PathVariable id: Int, @RequestBody application: Application): ResponseEntity<Unit> {
+//        if (_serverService.getApplication(id) != null) {
+//            _serverService.notifyDeletion(id, application)
+//            return ResponseEntity(Unit, HttpStatus.OK)
+//        } else {
+//            return ResponseEntity(Unit, HttpStatus.NOT_FOUND)
+//        }
+//    }
 }
