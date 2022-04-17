@@ -5,5 +5,5 @@ import com.example.itmarathon.models.Device
 
 interface IDevicesApplicationsRepository {
     fun installApplicationOnDevice(device: Device, application: Application): Boolean
-    fun getApplicationsOfDevice(device: Device): List<Application?>
+    fun getApplicationsOfDevice(deviceId: Int): List<Application?>
 }

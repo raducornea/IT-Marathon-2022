@@ -34,11 +34,11 @@ class DeviceApplicationRepository: IDevicesApplicationsRepository {
         return false
     }
 
-    override fun getApplicationsOfDevice(device: Device): List<Application?> {
+    override fun getApplicationsOfDevice(deviceId: Int): List<Application?> {
         return _jdbcTemplate.query("SELECT a.id, a.name, a.data, a.version " +
                 "FROM Devices d, Applications a, Devices_Applications da " +
                 "WHERE da.device_id == d.id AND da.application_id == a.id " +
-                "AND d.id = ${device.id}", _appRowMapper)
+                "AND d.id = $deviceId", _appRowMapper)
     }
 
     private fun createTable() {

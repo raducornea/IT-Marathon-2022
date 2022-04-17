@@ -5,5 +5,5 @@ import com.example.itmarathon.models.User
 
 interface IDeviceRepository {
     fun registerDevice(device: Device): Boolean
-    fun getDevicesOfUser(user: User): List<Device?>
+    fun getDevicesOfUser(userId: Int): List<Device?>
 }

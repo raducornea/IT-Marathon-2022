@@ -51,6 +51,31 @@ class ApplicationController {
         else ResponseEntity(Unit, HttpStatus.NOT_FOUND)
     }
 
+    @RequestMapping(value = ["/device/{id}"], method = [RequestMethod.GET])
+    fun getApplicationsOfDevice(@PathVariable id: Int): ResponseEntity<List<Application?>> {
+        val apps = _serverService.getDeviceApplications(id)
+
+        return if(apps.isNotEmpty()) {
+            ResponseEntity(apps, HttpStatus.OK)
+        } else {
+            ResponseEntity(apps, HttpStatus.NOT_FOUND)
+        }
+    }
+
+    @RequestMapping(value = ["/users/{id}"], method = [RequestMethod.GET])
+    fun getDevicesOfUser(@PathVariable id: Int): ResponseEntity<List<Device?>> {
+
+        val devices = _serverService.getUserDevices(id)
+
+        return if(devices.isNotEmpty()) {
+            ResponseEntity(devices, HttpStatus.OK)
+        } else {
+            ResponseEntity(devices, HttpStatus.NOT_FOUND)
+        }
+    }
+
+
+
     //todo
 //    @RequestMapping(value = ["/application"], method = [RequestMethod.DELETE])
 //    fun deleteApplication(@PathVariable id: Int, @RequestBody application: Application): ResponseEntity<Unit> {

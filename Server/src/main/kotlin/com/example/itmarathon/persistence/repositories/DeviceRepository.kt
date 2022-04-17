@@ -33,8 +33,8 @@ class DeviceRepository: IDeviceRepository {
         return false
     }
 
-    override fun getDevicesOfUser(user: User): List<Device?> {
-        return _jdbcTemplate.query("SELECT * FROM Devices WHERE user_id = ${user.id}", _rowMapper)
+    override fun getDevicesOfUser(userId: Int): List<Device?> {
+        return _jdbcTemplate.query("SELECT * FROM Devices WHERE user_id = ${userId}", _rowMapper)
     }
 
     private fun createTable() {

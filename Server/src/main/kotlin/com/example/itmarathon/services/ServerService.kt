@@ -39,6 +39,15 @@ class ServerService : IServerService {
         return _applicationRepository.uploadApp(Application(name = name, data = data))
     }
 
+    override fun getDeviceApplications(deviceId: Int): List<Application?> {
+        return _devicesApplicationsRepository.getApplicationsOfDevice(deviceId)
+    }
+
+    override fun getUserDevices(userId: Int): List<Device?> {
+        return _deviceRepository.getDevicesOfUser(userId)
+    }
+
+
     /** In functie de deviceId, se va notifica user-ul cu privire la noi versiuni pe care le poate sau nu updata */
     override fun notifyUpdates(deviceId: Int, application: Application){
 
