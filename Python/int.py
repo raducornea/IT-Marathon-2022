@@ -155,47 +155,40 @@ class Admin:
         self.data = tk.Text()
 
         self.deviceName = tk.Entry()
+
     def adminInterface(self):
         self.interface.title('DevelopMap')
         self.interface.geometry("800x300")
 
-        applicationNameLabel = tk.Label(self.interface, text="applicatione name", font=("Arial", 10))
+        applicationNameLabel = tk.Label(self.interface, text="Application Name", font=("Arial", 10))
         applicationNameLabel.place(x=10, y=10)
         self.applicationNameEntry = tk.Entry(self.interface, width=40, bd=5)
         self.applicationNameEntry.place(x=120, y=10)
-        labelData = tk.Label(self.interface, text="date", font=("Arial", 10))
+        labelData = tk.Label(self.interface, text="Date", font=("Arial", 10))
         labelData.place(x=10, y=40)
         self.data = tk.Text(self.interface, height=10, width=25)
         self.data.place(x=50, y=40)
 
-        labelName = tk.Label(self.interface, text="name device", font=("Arial", 10))
-        labelName.place(x=0, y=220)
-
-        self.deviceName = tk.Entry(self.interface, width=40, bd=5)
-        self.deviceName.place(x=80, y=220)
-
-        buttonAdd = tk.Button(self.interface, text="Add App",width=20, command=self.ADD_app)
+        buttonAdd = tk.Button(self.interface, text="Add App", width=20, command=self.ADD_app)
         buttonAdd.place(x=10, y=250)
 
         buttonUpdate = tk.Button(self.interface, text="Update", width=20, command=self.UPDATE)
         buttonUpdate.place(x=200, y=250)
 
         columns = ('id', 'App name')
-        tree = tkinter.ttk.Treeview(self.interface,columns=columns, show='headings')
-        tree.heading('id', text='id')
-        tree.heading('App name', text='name')
-        tree.place(x=380, y=0)
+        self.tree = tkinter.ttk.Treeview(self.interface, columns=columns, show='headings')
+        self.tree.heading('id', text='id')
+        self.tree.heading('App name', text='name')
+        self.tree.place(x=380, y=0)
 
         buttonGetApp = tk.Button(self.interface, text="Get App", width=20, command=self.GET)
         buttonGetApp.place(x=400, y=250)
 
-        buttonADDDevice = tk.Button(self.interface, text="Add Device", width=10, command=self.ADD_Device)
-        buttonADDDevice.place(x=600, y=250)
-
         self.interface.mainloop()
 
     def ADD_app(self):
-        rq.post(f'http://localhost:6480/application?name={self.applicationNameEntry.get()}&data={self.data.get("1.0", "end")}')
+        rq.post(
+            f'http://localhost:6480/application?name={self.applicationNameEntry.get()}&data={self.data.get("1.0", "end")}')
 
     def UPDATE(self):
         content = {
@@ -208,14 +201,20 @@ class Admin:
         rq.put(f'http://localhost:6480/application', json=content)
 
     def GET(self):
-        pass
+        parsed = json.loads(rq.get(f'http://localhost:6480/applications').text)
+        print(parsed)
+
+        count = 1
+        for my_json in parsed:
+            self.tree.insert(parent="", index=count, iid=count, text="", values=(my_json["id"], my_json["name"]))
+            count += 1
 
     def ADD_Device(self):
         r = rq.post(f'http://localhost:6480/device?deviceName={self.deviceName.get()}&userId={1}')
 
 
 if __name__ == '__main__':
-    n = input()
+    n = input("Numar = ?")
     if n == '1':
         win = Window()
         win.Button()
@@ -223,5 +222,5 @@ if __name__ == '__main__':
     if n == '2':
         admin = Admin()
         admin.adminInterface()
-    
+
 
